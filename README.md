@@ -24,7 +24,7 @@ lets you act on it.
 
 | # | Deliverable | What it produces | Time |
 | --- | --- | --- | --- |
-| 1 | [**Getting to Concreteness**](https://358c7hxkilu.typeform.com/to/TOttSNtf) | An external form to help you find a problem worth solving, for one specific person, with a measurable definition of success and the smallest product that addresses it | 30-60 minutes |
+| 1 | [**Getting to Concreteness**](https://bit.ly/fde-concreteness) | An external form to help you find a problem worth solving, for one specific person, with a measurable definition of success and the smallest product that addresses it | 30-60 minutes |
 | 2 | [**Set up your machine**](./00_Prerequisites/README.md) | A working environment — tooling, Claude Code, your own repo, a model you can reach — and a measured record of what your network allows | 45-90 minutes |
 | 3 | [**First Steps**](./01_First_Steps/S1_Enterprise_Dev_Environment.ipynb) | A notebook to test your environement and identify limitations | 40 minutes |
 
