@@ -1,0 +1,17 @@
+[project]
+name = "enterprise-fde-challenge"
+version = "0.1.0"
+description = "The Enterprise FDE Challenge — set up your machine, and get concrete about the problem"
+requires-python = ">=3.12"
+
+dependencies = [
+    # Pinned EXACTLY, not a range. The .ipynb mirror embeds the marimo version
+    # in its metadata, so a bump rewrites the mirror.
+    "marimo==0.23.16",
+    "nbformat>=5.10",          # required by `marimo export ipynb`
+    "python-dotenv>=1.2",      # helpers/config.py
+    "litellm>=1.90",           # the one model call in the environment check
+]
+
+# These must match the notebook's PEP 723 inline dependencies, so a student
+# running `--sandbox` and a student running `make setup` get the same versions.
