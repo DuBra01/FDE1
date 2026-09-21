@@ -126,12 +126,205 @@ under deadline.
 | Path | What it is |
 | --- | --- |
 | [`00_Prerequisites/`](./00_Prerequisites/README.md) | Four guides: your machine, Claude Code, your repo, your model |
-| [`01_First_Stepo/`](./01_First_Steps) | The environment-check notebook, and its `.ipynb` |
-| [`NETWORK.md`](./01_First_Steps/NETWORK.md) | Where your findings go |
+| [`01_First_Steps/`](./01_First_Steps) | The environment-check notebook, and its `.ipynb` |
+| [`NETWORK.md`](./NETWORK.md) | Where your findings go |
 | `helpers/` | The small library the notebook imports |
 
 > **🔒 Never commit real company data**, hostnames, or internal architecture.
 > Describe the *shape* of an answer, not its specifics. If in doubt, leave it out.
+
+---
+
+---
+
+## My Implementation Notes
+
+This repository is my working copy of the **Enterprise FDE Challenge**.  
+The following notes document the development environment, model configuration,
+security practices, and repository-specific changes made while completing the
+environment setup exercises.
+
+### Development Environment
+
+The project is configured and tested on **macOS with Apple Silicon**.
+
+The development environment includes:
+
+- Python 3.12
+- `uv` for Python environment and dependency management
+- Docker Desktop
+- Visual Studio Code
+- Git and GitHub using SSH authentication
+- Claude Code
+- LiteLLM for model-provider abstraction
+- OpenAI API access
+- Ollama for local LLM inference
+
+Project dependencies are installed using:
+
+```bash
+make setup
+```
+
+The Python dependencies are managed by `uv` in the project's isolated virtual
+environment.
+
+### Model Configuration
+
+The project uses **LiteLLM** as an abstraction layer between the application
+and the model provider.
+
+This allows the same application code to work with different LLM providers by
+changing configuration rather than modifying the Python code.
+
+During the environment setup, two configurations were successfully tested:
+
+- **OpenAI API** using `gpt-4.1-mini`
+- **Local Ollama** using `llama3.2:1b`
+
+For example, the OpenAI configuration can use:
+
+```text
+LLM_MODEL=gpt-4.1-mini
+```
+
+while a local Ollama configuration can use:
+
+```text
+LLM_MODEL=ollama/llama3.2:1b
+LLM_API_BASE=http://localhost:11434
+```
+
+This demonstrated that the same LiteLLM application code could switch between
+a cloud-hosted model and a locally hosted model without changing the model-call
+logic.
+
+### Security and Local Configuration
+
+Provider credentials and environment-specific configuration are stored in the
+local `.env` file.
+
+The `.env` file is excluded from Git and **must never be committed to the
+repository**.
+
+The repository contains `.env.template` as the reference for the configuration
+variables required by the project.
+
+Before making this repository public, the Git repository and its history were
+checked to verify that the local `.env` file and OpenAI API credentials had not
+been committed.
+
+### Network and TLS Validation
+
+The environment notebook was used to test DNS and TLS connectivity to the
+external services required by the project, including:
+
+- PyPI
+- OpenAI
+- jsDelivr
+- Hugging Face
+- Docker Hub
+- GitHub
+
+The results of these checks are documented in:
+
+[`NETWORK.md`](./NETWORK.md)
+
+The tests confirmed successful connectivity from the development environment
+and did not identify obvious TLS interception during the checks.
+
+### Claude Code Project Conventions
+
+Claude Code is configured with repository-level development instructions in:
+
+[`CLAUDE.md`](./CLAUDE.md)
+
+This file contains persistent coding conventions that Claude Code should follow
+when working in the repository.
+
+As part of the exercise, a convention requiring descriptive variable names in
+the `helpers` code was added to `CLAUDE.md`. A fresh Claude Code context was then
+used to verify that the convention was applied without repeating it in the
+prompt.
+
+This demonstrates how repository-level agent instructions can be
+version-controlled alongside application code.
+
+### Preflight Helper
+
+The environment preflight code in `helpers/preflight.py` was refactored to
+provide a reusable function for detecting configured proxy environment
+variables.
+
+The helper reports which recognized proxy variables are currently set while
+keeping the existing network preflight behavior.
+
+This change was committed separately together with the Claude Code project
+convention.
+
+### Notebook Path Correction
+
+The environment notebook used by this repository is located at:
+
+```text
+01_First_Steps/S1_Enterprise_Dev_Environment.py
+```
+
+Some course material referenced an older/different notebook location.
+
+The notebook's helper import path was also corrected to reflect the current
+repository structure. Because `01_First_Steps` is directly below the repository
+root, the local `helpers` package is reached by moving one directory upward.
+
+The correction changed the repository-root lookup from:
+
+```python
+Path(mo.notebook_dir()).parent.parent
+```
+
+to:
+
+```python
+Path(mo.notebook_dir()).parent
+```
+
+This prevents Python from searching above the repository and ensures that the
+project's local `helpers` package is imported.
+
+### Running the Environment Notebook
+
+After cloning the repository and configuring the local environment:
+
+```bash
+make setup
+```
+
+The environment notebook can be launched with:
+
+```bash
+make nb F=01_First_Steps/S1_Enterprise_Dev_Environment.py
+```
+
+When returning to the project, the repository status can be checked with:
+
+```bash
+git status
+```
+
+### Repository-Specific Documentation
+
+The main repository-specific artifacts created during the environment setup are:
+
+| File | Purpose |
+| --- | --- |
+| [`NETWORK.md`](./NETWORK.md) | Records network connectivity and TLS findings |
+| [`CLAUDE.md`](./CLAUDE.md) | Defines persistent Claude Code project conventions |
+| `.env` | Local credentials and model configuration — intentionally excluded from Git |
+| `.env.template` | Example configuration without secrets |
+
+These files separate operational configuration, network findings, and
+AI-assisted development conventions while keeping sensitive credentials outside
+version control.
 
 ---
 
