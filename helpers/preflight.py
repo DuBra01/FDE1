@@ -129,6 +129,11 @@ class Report:
         return "Open network, public CAs, no proxy. Nothing here will bite you."
 
 
+def proxy_env() -> dict[str, str]:
+    """Which of PROXY_VARS are set in the current environment, and their values."""
+    return {k: os.environ[k] for k in PROXY_VARS if os.environ.get(k)}
+
+
 def _one(host: str, why: str, timeout: float) -> Probe:
     probe = Probe(host=host, why=why)
     try:
@@ -194,5 +199,5 @@ def check_egress(hosts=DEFAULT_HOSTS, *, timeout: float = 6.0,
 
     order = {h: i for i, (h, _) in enumerate(hosts)}
     report.probes.sort(key=lambda p: order.get(p.host, 999))
-    report.proxy_env = {k: os.environ[k] for k in PROXY_VARS if os.environ.get(k)}
+    report.proxy_env = proxy_env()
     return report
